@@ -91,3 +91,41 @@ resource "aws_iam_instance_profile" "service_instance_profile" {
   name = var.instance_profile_name
   role = aws_iam_role.service_role.name
 }
+
+resource "aws_iam_user" "cicd_python_service" {    
+  name = "cicd_python_service"
+}
+
+resource "aws_iam_user_policy" "AmazonEC2ContainerRegistryPowerUser" {  
+  name = "AmazonEC2ContainerRegistryPowerUser"  
+  user = aws_iam_user.cicd_python_service.name
+  policy = <<EOF
+  {
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetRepositoryPolicy",
+          "ecr:DescribeRepositories",
+          "ecr:ListImages",
+          "ecr:DescribeImages",
+          "ecr:BatchGetImage",
+          "ecr:GetLifecyclePolicy",
+          "ecr:GetLifecyclePolicyPreview",
+          "ecr:ListTagsForResource",
+          "ecr:DescribeImageScanFindings",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:PutImage"
+        ],
+        "Resource" : "*"
+      }
+    ]
+  }
+    EOF
+}
